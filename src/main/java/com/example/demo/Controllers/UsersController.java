@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
@@ -13,11 +14,9 @@ import java.util.Map;
 
 @Controller
 public class UsersController {
-    private Map<Integer, UserEntity> userList= new HashMap<Integer, UserEntity>(){{
-        put(0, new UserEntity("adam", 55));
-        put(1, new UserEntity("wiola", 13));
-    }};
+    private Map<Integer, UserEntity> userList= new HashMap<Integer, UserEntity>();
     private ObjectMapper objectMapper = new ObjectMapper();
+    private int idCounter = 0;
 
     @RequestMapping("/users")
     @ResponseBody
@@ -51,7 +50,22 @@ public class UsersController {
         }
 
         return "{}";
+    }
 
+    @RequestMapping("/users/{id}/remove")
+    @ResponseBody
+    public String removeUser(@PathVariable int id) {
+        userList.remove(id);
+        return "";
+    }
+
+    @RequestMapping("/users/add")
+    @ResponseBody
+    public String addUser(@RequestParam String name, @RequestParam int age) {
+        userList.put(idCounter, new UserEntity(name, age));
+
+        idCounter++;
+        return String.valueOf(idCounter-1);
     }
 
 }
